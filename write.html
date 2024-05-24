@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cute Diary Page</title>
+    <style>
+        body {
+            font-family: 'Arial, sans-serif';
+            background-color: #f0f8ff;
+            color: #333;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+        }
+
+        .diary-container {
+            background: #fff;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            width: 400px;
+            text-align: center;
+        }
+
+        .diary-input {
+            display: block;
+            width: calc(100% - 20px);
+            margin: 10px auto;
+            padding: 10px;
+            border-radius: 5px;
+            border: 1px solid #ddd;
+        }
+
+        #entry-text {
+            height: 100px;
+        }
+
+        button {
+            background-color: #ff69b4;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background-color: #ff1493;
+        }
+
+        .entry {
+            margin-top: 20px;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            position: relative;
+        }
+
+        .entry img {
+            max-width: 100%;
+            border-radius: 5px;
+        }
+
+        .delete-icon {
+            width: 20px;
+            height: 20px;
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+    <div class="diary-container">
+        <h1>My Cute Diary</h1>
+        <input type="date" id="entry-date" class="diary-input">
+        <textarea id="entry-text" class="diary-input" placeholder="Write your entry here..."></textarea>
+        <input type="color" id="entry-color" class="diary-input">
+        <input type="file" id="entry-image" class="diary-input" accept="image/*">
+        <button onclick="saveEntry()">Save Entry</button>
+        <div id="entries"></div>
+        <img src="https://cdn-icons-png.flaticon.com/512/1214/1214428.png" alt="Delete" class="delete-icon" onclick="deleteSelectedEntries()">
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', (event) => {
+            loadEntries();
+        });
+
+        function saveEntry() {
+            const date = document.getElementById('entry-date').value;
+            const text = document.getElementById('entry-text').value;
+            const color = document.getElementById('entry-color').value;
+            const imageInput = document.getElementById('entry-image');
+
+            if (!date || !text) {
+                alert('Please fill out the date and entry text.');
+                return;
+            }
+
+            let entries = JSON.parse(localStorage.getItem('diaryEntries')) || [];
+
+            const newEntry = {
+                id: Date.now(), // Unique ID for each entry
+                date,
+                text,
+                color,
+                image: ''
+            };
+
+            if (imageInput.files && imageInput.files[0]) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    newEntry.image = e.target.result;
+                    entries.push(newEntry);
+                    localStorage.setItem('diaryEntries', JSON.stringify(entries));
+                    displayEntries();
+                };
+                reader.readAsDataURL(imageInput.files[0]);
+            } else {
+                entries.push(newEntry);
+                localStorage.setItem('diaryEntries', JSON.stringify(entries));
+                displayEntries();
+            }
+
+            // Clear inputs
+            document.getElementById('entry-date').value = '';
+            document.getElementById('entry-text').value = '';
+            document.getElementById('entry-color').value = '#ffffff';
+            document.getElementById('entry-image').value = '';
+        }
+
+        function loadEntries() {
+            displayEntries();
+        }
+
+        function displayEntries() {
+            const entriesDiv = document.getElementById('entries');
+            entriesDiv.innerHTML = ''; // Clear existing entries
+
+            const entries = JSON.parse(localStorage.getItem('diaryEntries')) || [];
+
+            entries.forEach(entry => {
+                const entryDiv = document.createElement('div');
+                entryDiv.className = 'entry';
+                entryDiv.style.backgroundColor = entry.color;
+
+                const dateP = document.createElement('p');
+                dateP.textContent = entry.date;
+                entryDiv.appendChild(dateP);
+
+                const textP = document.createElement('p');
+                textP.textContent = entry.text;
+                entryDiv.appendChild(textP);
+
+                if (entry.image) {
+                    const img = document.createElement('img');
+                    img.src = entry.image;
+                    entryDiv.appendChild(img);
+                }
+
+                entriesDiv.appendChild(entryDiv);
+            });
+        }
+
+        function deleteSelectedEntries() {
+            const confirmDelete = confirm("Are you sure you want to delete all entries?");
+            if (confirmDelete) {
+                localStorage.removeItem('diaryEntries');
+                displayEntries();
+            }
+        }
+    </script>
+</body>
+</html>

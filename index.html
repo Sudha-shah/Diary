@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>My Dino diary</title>
+    <link href='https://fonts.googleapis.com/css?family=Rubik Bubbles' rel='stylesheet'>
+
+    <style>
+        .dino {
+            margin: 0 auto; /* Center the image */
+            display: block; /* Make sure the image is treated as a block element */
+            margin-top:190px; /* Adjust as needed */
+        }
+       .h1{
+           font-family: Rubik Bubbles;
+           padding:30px;    
+           text-align:center; 
+          font-size:80px; 
+          color:pink; }
+    </style>
+</head>
+<body>
+    <h1 class="h1">My Diary</h1>
+    <img src="Dino.gif" class="dino">
+    
+    <script>
+        // Wait for 3 seconds and then redirect to diary.html
+        setTimeout(function() {
+            window.location.href = "diary.html";
+        }, 2000); // 2000 milliseconds = 2 seconds
+    </script>
+</body>
+</html>
